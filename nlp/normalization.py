@@ -9,20 +9,10 @@ class Normalization:
         self.stopwords = ["DET", "ADP", "CCONJ", "PRON"]
 
     def normalize(self):
-        if isinstance(self.data, pd.Series):
-            print("Normalizando serie")
-            normalized_input = self.normalize_series()
-            return normalized_input
-
         if isinstance(self.data, pd.DataFrame):
             print("Normalizando df")
             normalized_input = self.normalize_dataframe()
             return normalized_input
-    
-    def normalize_series(self):
-        aux_data = self.data.copy()
-        aux_data = aux_data.apply(self.traverse_entity)
-        return aux_data
 
     def normalize_dataframe(self):
         aux_data = self.data.copy()
