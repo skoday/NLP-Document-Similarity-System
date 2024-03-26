@@ -1,64 +1,71 @@
 import tkinter as tk
 from tkinter import filedialog
 import pandas as pd
+from bridge.lo import bridge
 
-def cargar_csv():
-    filepath = filedialog.askopenfilename()
-    if filepath:
-        df = pd.read_csv(filepath)
-        # Aquí puedes hacer lo que necesites con el DataFrame, como mostrarlo en una tabla o procesarlo de alguna manera
+class Interfaz:
+    def __init__(self, master):
+        self.corpus = None
 
-def enviar():
-    # Aquí puedes obtener el texto del cuadro de texto y las selecciones de los menús desplegables y hacer lo que necesites con ellos
-    opcion_1 = dropdown_1.get()
-    opcion_2 = dropdown_2.get()
-    opcion_3 = dropdown_3.get()
-    texto = txt_input.get("1.0", tk.END)
-    print("Opción 1:", opcion_1)
-    print("Opción 2:", opcion_2)
-    print("Opción 3:", opcion_3)
-    print("Texto ingresado:", texto)
+        self.master = master
+        self.master.title("Interfaz")
+        self.master.geometry("600x400")  # Ajustar el tamaño de la ventana principal
 
-# Crear la ventana principal
-root = tk.Tk()
-root.title("Interfaz")
+        self.frame_csv = tk.Frame(self.master)
+        self.frame_csv.pack(pady=10)
+        self.btn_cargar_csv = tk.Button(self.frame_csv, text="Cargar CSV", command=self.cargar_csv)
+        self.btn_cargar_csv.pack(side=tk.LEFT)
 
-# Área para cargar archivo CSV y botón para procesarlo
-frame_csv = tk.Frame(root)
-frame_csv.pack(pady=10)
-btn_cargar_csv = tk.Button(frame_csv, text="Cargar CSV", command=cargar_csv)
-btn_cargar_csv.pack(side=tk.LEFT)
-btn_procesar = tk.Button(frame_csv, text="Procesar")
-btn_procesar.pack(side=tk.RIGHT)
+        self.frame_inputs = tk.Frame(self.master)
+        self.frame_inputs.pack(pady=10)
+        self.txt_input = tk.Text(self.frame_inputs, width=70, height=15)  # Ajustar el tamaño del cuadro de texto
+        self.txt_input.pack(padx=5, side=tk.LEFT)
 
-# Cuadro de texto y menús desplegables
-frame_inputs = tk.Frame(root)
-frame_inputs.pack(pady=10)
-txt_input = tk.Text(frame_inputs, width=50, height=5)  # Ajusta el número de filas según sea necesario
-txt_input.pack(padx=5, side=tk.LEFT)
+        opciones_1 = ["binary", "frequency", "tfidf"]
+        opciones_2 = ["1", "2", "3"]
+        opciones_3 = ["Título", "Contenido", "Título-Contenido"]
 
-opciones_1 = ["Opción 1A", "Opción 1B", "Opción 1C"]
-opciones_2 = ["Opción 2A", "Opción 2B", "Opción 2C"]
-opciones_3 = ["Opción 3A", "Opción 3B", "Opción 3C"]
+        self.dropdown_1 = tk.StringVar(self.master)
+        self.dropdown_1.set(opciones_1[0])
+        self.menu_1 = tk.OptionMenu(self.frame_inputs, self.dropdown_1, *opciones_1)
+        self.menu_1.pack(padx=5, side=tk.LEFT)
 
-dropdown_1 = tk.StringVar(root)
-dropdown_1.set(opciones_1[0])
-menu_1 = tk.OptionMenu(frame_inputs, dropdown_1, *opciones_1)
-menu_1.pack(padx=5, side=tk.LEFT)
+        self.dropdown_2 = tk.StringVar(self.master)
+        self.dropdown_2.set(opciones_2[0])
+        self.menu_2 = tk.OptionMenu(self.frame_inputs, self.dropdown_2, *opciones_2)
+        self.menu_2.pack(padx=5, side=tk.LEFT)
 
-dropdown_2 = tk.StringVar(root)
-dropdown_2.set(opciones_2[0])
-menu_2 = tk.OptionMenu(frame_inputs, dropdown_2, *opciones_2)
-menu_2.pack(padx=5, side=tk.LEFT)
+        self.dropdown_3 = tk.StringVar(self.master)
+        self.dropdown_3.set(opciones_3[0])
+        self.menu_3 = tk.OptionMenu(self.frame_inputs, self.dropdown_3, *opciones_3)
+        self.menu_3.pack(padx=5, side=tk.LEFT)
 
-dropdown_3 = tk.StringVar(root)
-dropdown_3.set(opciones_3[0])
-menu_3 = tk.OptionMenu(frame_inputs, dropdown_3, *opciones_3)
-menu_3.pack(padx=5, side=tk.LEFT)
+        self.btn_enviar = tk.Button(self.master, text="Enviar", command=self.enviar)
+        self.btn_enviar.pack(pady=10)
 
-# Botón de enviar
-btn_enviar = tk.Button(root, text="Enviar", command=enviar)
-btn_enviar.pack(pady=10)
+    def cargar_csv(self):
+        filepath = filedialog.askopenfilename()
+        if filepath:
+            self.corpus = pd.read_csv(filepath)
 
-# Ejecutar la aplicación
-root.mainloop()
+    def enviar(self):
+        opcion_1 = self.dropdown_1.get()
+        opcion_2 = int(self.dropdown_2.get())
+        opcion_3 = self.dropdown_3.get()
+        texto = self.txt_input.get("1.0", tk.END)
+
+        lineas_limpias = [linea.strip() for linea in texto.split("\n") if linea.strip()] 
+        data = {"Documento": lineas_limpias}
+        df = pd.DataFrame(data)
+
+        enlace = bridge(self.corpus, df, [opcion_1, opcion_2, opcion_3])
+        enlace.procesar_envio()
+
+
+def iniciar_interfaz():
+    root = tk.Tk()
+    app = Interfaz(root)
+    root.mainloop()
+
+if __name__ == "__main__":
+    iniciar_interfaz()
