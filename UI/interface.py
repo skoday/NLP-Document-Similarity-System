@@ -1,91 +1,64 @@
 import tkinter as tk
 from tkinter import filedialog
-import tkinter.ttk as ttk  # Importar ttk para widgets estilizados
 import pandas as pd
 
-class Interfaz(tk.Tk):
-    def __init__(self):
-        super().__init__()
+def cargar_csv():
+    filepath = filedialog.askopenfilename()
+    if filepath:
+        df = pd.read_csv(filepath)
+        # Aquí puedes hacer lo que necesites con el DataFrame, como mostrarlo en una tabla o procesarlo de alguna manera
 
-        self.style = ttk.Style()  # Crear un objeto de estilo
-        self.style.theme_use("clam")  # Aplicar un tema predefinido
+def enviar():
+    # Aquí puedes obtener el texto del cuadro de texto y las selecciones de los menús desplegables y hacer lo que necesites con ellos
+    opcion_1 = dropdown_1.get()
+    opcion_2 = dropdown_2.get()
+    opcion_3 = dropdown_3.get()
+    texto = txt_input.get("1.0", tk.END)
+    print("Opción 1:", opcion_1)
+    print("Opción 2:", opcion_2)
+    print("Opción 3:", opcion_3)
+    print("Texto ingresado:", texto)
 
-        # --- Configuración general ---
-        self.title("Interfaz Tkinter Estilizada")
-        self.geometry("600x400")
+# Crear la ventana principal
+root = tk.Tk()
+root.title("Interfaz")
 
-        # --- Selector de archivo CSV ---
-        self.label_csv = ttk.Label(self, text="Seleccionar archivo CSV:")
-        self.label_csv.pack()
+# Área para cargar archivo CSV y botón para procesarlo
+frame_csv = tk.Frame(root)
+frame_csv.pack(pady=10)
+btn_cargar_csv = tk.Button(frame_csv, text="Cargar CSV", command=cargar_csv)
+btn_cargar_csv.pack(side=tk.LEFT)
+btn_procesar = tk.Button(frame_csv, text="Procesar")
+btn_procesar.pack(side=tk.RIGHT)
 
-        self.button_select_csv = ttk.Button(self, text="Seleccionar archivo", command=self.cargar_csv)
-        self.button_select_csv.pack()
+# Cuadro de texto y menús desplegables
+frame_inputs = tk.Frame(root)
+frame_inputs.pack(pady=10)
+txt_input = tk.Text(frame_inputs, width=50, height=5)  # Ajusta el número de filas según sea necesario
+txt_input.pack(padx=5, side=tk.LEFT)
 
-        # --- Espacio para ingresar texto ---
-        self.label_text = ttk.Label(self, text="Ingresar texto:")
-        self.label_text.pack()
+opciones_1 = ["Opción 1A", "Opción 1B", "Opción 1C"]
+opciones_2 = ["Opción 2A", "Opción 2B", "Opción 2C"]
+opciones_3 = ["Opción 3A", "Opción 3B", "Opción 3C"]
 
-        self.text_input = tk.Text(self, height=5, width=40, borderwidth=2, relief="groove")  # Dar estilo al Text
-        self.text_input.pack()
+dropdown_1 = tk.StringVar(root)
+dropdown_1.set(opciones_1[0])
+menu_1 = tk.OptionMenu(frame_inputs, dropdown_1, *opciones_1)
+menu_1.pack(padx=5, side=tk.LEFT)
 
-        # --- Menús desplegables ---
-        self.label_dropdowns = ttk.Label(self, text="Seleccionar opciones:")
-        self.label_dropdowns.pack()
+dropdown_2 = tk.StringVar(root)
+dropdown_2.set(opciones_2[0])
+menu_2 = tk.OptionMenu(frame_inputs, dropdown_2, *opciones_2)
+menu_2.pack(padx=5, side=tk.LEFT)
 
-        opciones = ["Opción 1", "Opción 2", "Opción 3"]
-        variables = [tk.StringVar(value=opciones[0]) for _ in opciones]
-        self.option_menus = [
-            ttk.OptionMenu(self, variables[i], *opciones) for i in range(3)
-        ]
-        for menu in self.option_menus:
-            menu.pack(side=tk.LEFT, padx=5)
+dropdown_3 = tk.StringVar(root)
+dropdown_3.set(opciones_3[0])
+menu_3 = tk.OptionMenu(frame_inputs, dropdown_3, *opciones_3)
+menu_3.pack(padx=5, side=tk.LEFT)
 
-        # --- Botón para enviar datos de los dropdowns ---
-        self.button_send_dropdowns = ttk.Button(self, text="Enviar opciones", command=self.enviar_dropdowns)
-        self.button_send_dropdowns.pack()
+# Botón de enviar
+btn_enviar = tk.Button(root, text="Enviar", command=enviar)
+btn_enviar.pack(pady=10)
 
-        # --- Espacio para mostrar registros de DataFrame ---
-        self.label_dataframe = ttk.Label(self, text="Registros de DataFrame:")
-        self.label_dataframe.pack()
-
-        self.dataframe_display = tk.Text(self, height=10, width=50, borderwidth=2, relief="sunken")  # Dar estilo al Text
-        self.dataframe_display.pack()
-
-        # --- Botón para cargar otro archivo CSV ---
-        self.button_load_another_csv = ttk.Button(
-            self, text="Cargar otro archivo CSV", command=self.cargar_otro_csv
-        )
-        self.button_load_another_csv.pack()
-
-        # --- Funciones de la interfaz ---
-        # (El código de las funciones permanece igual)
-
-
-    def cargar_csv(self):
-        filepath = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv")])
-        if filepath:
-            df = pd.read_csv(filepath)
-            self.mostrar_dataframe(df)
-
-    def cargar_otro_csv(self):
-        filepath = filedialog.askopenfilename(filetypes=[("CSV files", "*.csv")])
-        if filepath:
-            df = pd.read_csv(filepath)
-            self.mostrar_dataframe(df)
-
-    def mostrar_dataframe(self, df):
-        self.dataframe_display.delete("1.0", tk.END)  # Limpiar el área de visualización
-        self.dataframe_display.insert(tk.END, df.to_string(index=False))
-
-    def enviar_dropdowns(self):
-        opcion_1 = self.option_menu_1["textvariable"].get()
-        opcion_2 = self.option_menu_2["textvariable"].get()
-        opcion_3 = self.option_menu_3["textvariable"].get()
-
-        print("Opción 1:", opcion_1)
-        print("Opción 2:", opcion_2)
-        print("Opción 3:", opcion_3)
-
-if __name__ == "__main__":
-    app = Interfaz()
-    app.mainloop()
+# Ejecutar la aplicación
+root.mainloop()
