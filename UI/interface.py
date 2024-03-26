@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 import pandas as pd
-from bridge.lo import bridge
+from bridge.lo import Bridge
 
 class Interfaz:
     def __init__(self, master):
@@ -9,7 +9,7 @@ class Interfaz:
 
         self.master = master
         self.master.title("Interfaz")
-        self.master.geometry("600x400")  # Ajustar el tamaño de la ventana principal
+        self.master.geometry("800x600")  # Ajustar el tamaño de la ventana principal
 
         self.frame_csv = tk.Frame(self.master)
         self.frame_csv.pack(pady=10)
@@ -58,7 +58,7 @@ class Interfaz:
         data = {"Documento": lineas_limpias}
         df = pd.DataFrame(data)
 
-        enlace = bridge(self.corpus, df, [opcion_1, opcion_2, opcion_3])
+        enlace = Bridge(self.corpus, df, [opcion_1, opcion_2, opcion_3])
         enlace.procesar_envio()
 
 

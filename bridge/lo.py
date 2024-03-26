@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from pandas.plotting import table
 import subprocess
 
-class bridge:
+class Bridge:
 
     def __init__(self, corpus, documentos, parametros) -> None:
         self.corpus = corpus
