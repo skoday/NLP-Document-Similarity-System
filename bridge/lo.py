@@ -63,4 +63,4 @@ class Bridge:
         adjustment = Adjust_Document(model, documentos_normalizados, self.corpus, self.parametros[2])
         simuilitudes = adjustment.compare()
 
-        self.guardar_pdf()
+        self.guardar_pdf(simuilitudes)
