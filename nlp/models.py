@@ -50,6 +50,7 @@ class Adjust_Document:
         self.model = model
         self.document = documet
         self.corpus = corpus
+        self.corpus["Título-Contenido"] = self.corpus["Título"] + " - " + self.corpus["Contenido"]
         self.column = column
         self.corpus_features = model.transform(self.corpus[column]) #self corpues es un Dframe
         self.document_features = model.transform(self.document["Documento"]) # Documets can be a list

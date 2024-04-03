@@ -57,7 +57,7 @@ class Interfaz:
         lineas_limpias = [linea.strip() for linea in texto.split("\n") if linea.strip()] 
         data = {"Documento": lineas_limpias}
         df = pd.DataFrame(data)
-
+        print(self.corpus)
         enlace = Bridge(self.corpus, df, [opcion_1, opcion_2, opcion_3])
         enlace.procesar_envio()
 
