@@ -10,7 +10,7 @@ class Normalization:
 
     def normalize(self):
         if isinstance(self.data, pd.DataFrame):
-            print("Normalizando df")
+            #print("Normalizando df")
             normalized_input = self.normalize_dataframe()
             return normalized_input
 

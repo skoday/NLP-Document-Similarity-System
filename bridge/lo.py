@@ -3,6 +3,7 @@ from nlp.normalization import Normalization
 import matplotlib.pyplot as plt
 from pandas.plotting import table
 import subprocess
+import pandas as pd
 
 class Bridge:
 
@@ -62,5 +63,37 @@ class Bridge:
 
         adjustment = Adjust_Document(model, documentos_normalizados, self.corpus, self.parametros[2])
         simuilitudes = adjustment.compare()
-        print(simuilitudes)
+        #print(simuilitudes)
+
+        return simuilitudes
         #self.guardar_pdf(simuilitudes)
+
+    def procesar_todo(self):
+
+        dataframes = []
+
+        for mode in ["binary", "frequency", "tfidf"]:
+            for num in [1, 2]:
+                for field in ["Título", "Contenido", "Título-Contenido"]:
+                    bridge = Bridge(self.corpus, self.documentos, [mode, num, field])
+                    similitudes = bridge.procesar_envio()
+                    for elemento in similitudes:
+                        elemento["Tipo"] = mode
+                        elemento["ngram"] = num
+                        elemento["Comparación"] = field
+
+                    dataframes.append(similitudes)           
+
+        dataframes_concatenados = []
+
+        for i in range(len(self.documentos)):
+            lista = [elemento[i] for elemento in dataframes]
+            aux =  pd.concat(lista, axis = 0)
+            aux.sort_values(by='Similarity', ascending=False, inplace=True)
+            dataframes_concatenados.append(aux.head(10))
+
+        #for elemento in dataframes_concatenados:
+        #    elemento.sort_values(by='Similarity', ascending=False, inplace=True)
+        #    elemento = elemento.head(10)
+
+        return dataframes_concatenados

@@ -43,6 +43,9 @@ class Interfaz:
         self.btn_enviar = tk.Button(self.master, text="Enviar", command=self.enviar)
         self.btn_enviar.pack(pady=10)
 
+        self.btn_comparar_todo = tk.Button(self.master, text="Comparar todo", command=self.comparar_todo)
+        self.btn_comparar_todo.pack(pady=10)
+
     def cargar_csv(self):
         filepath = filedialog.askopenfilename()
         if filepath:
@@ -59,7 +62,20 @@ class Interfaz:
         df = pd.DataFrame(data)
         print(self.corpus)
         enlace = Bridge(self.corpus, df, [opcion_1, opcion_2, opcion_3])
-        enlace.procesar_envio()
+        respuesta = enlace.procesar_envio()
+        print(respuesta)
+
+    def comparar_todo(self):
+
+        texto = self.txt_input.get("1.0", tk.END)
+        lineas_limpias = [linea.strip() for linea in texto.split("\n") if linea.strip()] 
+        data = {"Documento": lineas_limpias}
+        df = pd.DataFrame(data)
+
+        enlace = Bridge(self.corpus, df, [])
+        respuesta = enlace.procesar_todo()
+
+        print(respuesta)
 
 
 def iniciar_interfaz():
